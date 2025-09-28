@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post New Task</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GAMER THEME COLORS --- */
+        :root {
+            --color-bg-dark: #12121e;
+            --color-bg-medium: #1f1f33;
+            --color-text-light: #f0f0f0;
+            --color-primary-purple: #9c27b0; /* Main Accent */
+            --color-accent-green: #00ff7f; /* Neon Success */
+            --color-border: #383855;
+            --color-card-dark: #2b2b41;
+        }
+
+        /* General Setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* Card Container */
+        .form-card {
+            background-color: var(--color-bg-medium);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.4);
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid var(--color-primary-purple);
+        }
+        
+        /* Typography */
+        h2 {
+            color: var(--color-accent-green);
+            font-weight: 900;
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px rgba(0, 255, 127, 0.5);
+        }
+        .subtitle {
+            color: var(--color-text-light);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--color-primary-purple);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background-color: #2b2b41;
+            color: var(--color-text-light);
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        textarea {
+            resize: vertical;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--color-accent-green);
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 255, 127, 0.5);
+        }
+        .current-coins {
+            color: #ffb300;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        /* Dynamic Reward Display */
+        #reward-display {
+            background-color: #383855;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 700;
+            border: 1px solid var(--color-primary-purple);
+        }
+        #reward-coins, #reward-xp {
+            color: var(--color-accent-green);
+            font-size: 1.1em;
+        }
+
+
+        /* Buttons */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            color: var(--color-bg-dark) !important;
+            background-color: var(--color-accent-green);
+            border: none;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            margin-top: 30px;
+        }
+        .action-btn:hover {
+            background-color: #00c961;
+            box-shadow: 0 0 10px rgba(0, 255, 127, 0.8);
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: var(--color-primary-purple);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: var(--color-accent-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2>POST NEW REQUEST</h2>
+        <p class="subtitle">Set the difficulty, and the reward will be calculated automatically.</p>
+
+        <span class="current-coins">Your Coins: {{ user.coins }} 💰</span>
+        
+        <form method="POST">
+            <label for="title">Task Title</label>
+            <input type="text" id="title" name="title" required placeholder="e.g., Need help with a coding bug">
+            
+            <label for="description">Detailed Description</label>
+            <textarea id="description" name="description" required rows="4" placeholder="Be specific about what you need!"></textarea>
+            
+            <label for="difficulty">Task Difficulty</label>
+            <select id="difficulty" name="difficulty" required onchange="updateRewardDisplay(this.value)">
+                <!-- Loop through the difficulty options defined in app.py -->
+                {% for diff in difficulties %}
+                    <option value="{{ diff }}">{{ diff }}</option>
+                {% endfor %}
+            </select>
+            
+            <!-- Hidden Input for Coins - The backend ignores the input field but needs the value -->
+            <input type="hidden" id="reward_coins" name="reward_coins" value="10">
+
+            <div id="reward-display">
+                Auto Reward: <span id="reward-coins">10 Coins</span> and <span id="reward-xp">10 XP</span>
+            </div>
+            
+            <button type="submit" class="action-btn">Post Request</button>
+        </form>
+
+        <a href="{{ url_for('index') }}" class="back-link">
+            &#8592; Back to Dashboard
+        </a>
+    </div>
+
+    <script>
+        // FIX: The XP_MAPPING object is created by Jinja BEFORE the page loads.
+        // We use JSON.parse to safely convert the Python dictionary passed by Flask
+        // into a clean JavaScript object. The | safe filter ensures Jinja doesn't escape the quotes.
+        const xpMapping = JSON.parse('{{ XP_MAPPING | tojson | safe }}');
+
+        function updateRewardDisplay(difficulty) {
+            // Use bracket notation to safely access the property
+            const xp = xpMapping[difficulty] || 10;
+            
+            // Coins are automatically linked to XP (Coins = XP)
+            const coins = xp; 
+            
+            document.getElementById('reward-coins').innerText = coins + ' Coins';
+            document.getElementById('reward-xp').innerText = xp + ' XP';
+            
+            // Update the hidden input value so it gets submitted
+            document.getElementById('reward_coins').value = coins;
+        }
+
+        // Initialize display on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialDifficulty = document.getElementById('difficulty').value;
+            updateRewardDisplay(initialDifficulty);
+        });
+    </script>
+</body>
+</html>

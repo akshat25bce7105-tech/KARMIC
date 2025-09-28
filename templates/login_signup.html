@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>KARMIC Access</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GAMER THEME COLORS --- */
+        :root {
+            --color-bg-dark: #12121e;
+            --color-bg-medium: #1f1f33;
+            --color-text-light: #f0f0f0;
+            --color-primary-purple: #9c27b0; /* Main Accent */
+            --color-accent-green: #00ff7f; /* Neon Success */
+            --color-border: #383855;
+            --color-card-dark: #2b2b41;
+        }
+
+        /* General Setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* Card Container */
+        .access-card {
+            background-color: var(--color-bg-medium);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(156, 39, 176, 0.4);
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid var(--color-primary-purple);
+            text-align: center;
+        }
+        
+        /* Typography */
+        h2 {
+            color: var(--color-accent-green);
+            font-weight: 900;
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px rgba(0, 255, 127, 0.5);
+        }
+        .subtitle {
+            color: var(--color-text-light);
+            margin-bottom: 30px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Form Elements */
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: var(--color-primary-purple);
+            font-weight: 600;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background-color: #2b2b41;
+            color: var(--color-text-light);
+            box-sizing: border-box;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: var(--color-accent-green);
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 255, 127, 0.5);
+        }
+
+        /* Flash Messages */
+        .message-box {
+            background-color: #383855; 
+            color: var(--color-accent-green); 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin-bottom: 15px; 
+            font-weight: 600;
+            border: 1px solid var(--color-primary-purple);
+        }
+
+        /* Buttons */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            color: var(--color-bg-dark) !important;
+            background-color: var(--color-accent-green);
+            border: none;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+        }
+        .action-btn:hover {
+            background-color: #00c961;
+            box-shadow: 0 0 10px rgba(0, 255, 127, 0.8);
+        }
+        
+        .switch-link {
+            color: var(--color-primary-purple);
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            text-decoration: underline;
+        }
+        .switch-link:hover {
+            color: var(--color-accent-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="access-card">
+        <h2>KARMIC ACCESS</h2>
+        <p class="subtitle">Log in or create a new account to join the community.</p>
+
+        <!-- Display Flash Messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="message-box">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" id="access-form">
+            <label for="username">USERNAME</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">PASSWORD</label>
+            <input type="password" id="password" name="password" required>
+            
+            <!-- This hidden input tells the backend whether to LOG IN or REGISTER -->
+            <input type="hidden" name="action" id="action-input" value="login">
+            
+            <button type="submit" class="action-btn" id="submit-btn">Login</button>
+        </form>
+
+        <p class="switch-link" onclick="toggleForm()">
+            Don't have an account? <span id="switch-text">Register here.</span>
+        </p>
+    </div>
+
+    <script>
+        function toggleForm() {
+            const form = document.getElementById('access-form');
+            const actionInput = document.getElementById('action-input');
+            const submitBtn = document.getElementById('submit-btn');
+            const switchText = document.getElementById('switch-text');
+
+            if (actionInput.value === 'login') {
+                // Switch to Register mode
+                actionInput.value = 'register';
+                submitBtn.innerText = 'Register';
+                switchText.innerText = 'Go back to Login.';
+            } else {
+                // Switch back to Login mode
+                actionInput.value = 'login';
+                submitBtn.innerText = 'Login';
+                switchText.innerText = 'Register here.';
+            }
+        }
+    </script>
+</body>
+</html>

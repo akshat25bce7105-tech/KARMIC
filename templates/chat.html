@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat: {{ request.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GAMER THEME COLORS --- */
+        :root {
+            --color-bg-dark: #12121e;
+            --color-bg-medium: #1f1f33;
+            --color-text-light: #f0f0f0;
+            --color-primary-purple: #9c27b0; 
+            --color-accent-green: #00ff7f; 
+            --color-border: #383855;
+            --color-card-dark: #2b2b41;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--color-bg-medium);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(156, 39, 176, 0.4);
+            display: flex;
+            flex-direction: column;
+            height: 80vh; /* Fixed height for chat area */
+        }
+        
+        .chat-header {
+            padding: 15px;
+            border-bottom: 2px solid var(--color-border);
+            color: var(--color-accent-green);
+            font-weight: 700;
+            font-size: 1.2em;
+            text-shadow: 0 0 3px rgba(0, 255, 127, 0.5);
+        }
+        
+        .message-area {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            border-bottom: 2px solid var(--color-border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .message-bubble {
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+        
+        .sent {
+            align-self: flex-end;
+            background-color: var(--color-primary-purple);
+            border-bottom-right-radius: 3px;
+        }
+        
+        .received {
+            align-self: flex-start;
+            background-color: #2b2b41;
+            border-bottom-left-radius: 3px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .sender-name {
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+        .sender-name.self {
+            color: var(--color-accent-green);
+        }
+        .sender-name.other {
+            color: #ffb300;
+        }
+
+        /* Message Input */
+        .input-area {
+            display: flex;
+            padding: 15px;
+        }
+        
+        .input-area textarea {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            background-color: #2b2b41;
+            color: var(--color-text-light);
+            resize: none;
+            margin-right: 10px;
+            height: 40px;
+        }
+        .input-area button {
+            padding: 10px 15px;
+            background-color: var(--color-accent-green);
+            color: var(--color-bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .input-area button:hover {
+            background-color: #00c961;
+        }
+
+        .back-link {
+            color: var(--color-primary-purple);
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            color: var(--color-accent-green);
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('index') }}" class="back-link">&#8592; Back to Dashboard</a>
+    
+    <div class="chat-container">
+        <div class="chat-header">
+            Chat for: {{ request.title }} (Talking to: {{ partner.username if partner else 'User Unavailable' }})
+        </div>
+        
+        <div class="message-area" id="message-area">
+            {% for message in messages %}
+                {% if message.sender_id == user.id %}
+                    <div class="message-bubble sent">
+                        <div class="sender-name self">You</div>
+                        {{ message.content }}
+                    </div>
+                {% else %}
+                    <div class="message-bubble received">
+                        <div class="sender-name other">{{ message.sender.username }}</div>
+                        {{ message.content }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <div class="input-area">
+            <form method="POST" action="{{ url_for('send_message', request_id=request.id) }}" style="display: flex; width: 100%;">
+                <textarea name="content" placeholder="Type your message..." required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-scroll to the bottom of the chat on load
+        const messageArea = document.getElementById('message-area');
+        messageArea.scrollTop = messageArea.scrollHeight;
+    </script>
+</body>
+</html>

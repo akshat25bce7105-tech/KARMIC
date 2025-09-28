@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMIC Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- GAMER THEME COLORS --- */
+        :root {
+            --color-bg-dark: #12121e;
+            --color-bg-medium: #1f1f33;
+            --color-text-light: #f0f0f0;
+            --color-primary-purple: #9c27b0; /* Main Accent */
+            --color-accent-green: #00ff7f; /* Neon Success */
+            --color-border: #383855;
+            --color-card-dark: #2b2b41;
+        }
+
+        /* General Setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg-dark);
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* Header and Layout */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: var(--color-primary-purple);
+            margin: 0;
+            font-size: 2em;
+            font-weight: 900;
+            text-shadow: 0 0 5px rgba(156, 39, 176, 0.5);
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .left-panel {
+            flex: 2;
+            min-width: 300px;
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 200px;
+            background-color: var(--color-bg-medium);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.2);
+            margin-bottom: 20px;
+        }
+        .panel-heading {
+            color: var(--color-accent-green);
+            border-bottom: 2px solid var(--color-primary-purple);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background-color: var(--color-bg-medium);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 8px rgba(0, 255, 127, 0.2);
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--color-border);
+        }
+        .stats-bar .rank {
+            background-color: var(--color-primary-purple);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+
+        /* Request Cards */
+        .request-card {
+            background-color: #2b2b41; /* Slightly lighter card BG */
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 0 5px rgba(0, 255, 127, 0.1);
+        }
+        .request-card h4 {
+            margin-top: 0;
+            margin-bottom: 5px;
+            color: var(--color-accent-green);
+        }
+        
+        /* --- STATUS BORDERS (Simplified and Stable) --- */
+        .status-Completed { border-left: 5px solid #00ff7f; } /* Neon Green */
+        .status-Confirmed_By_Helper { border-left: 5px solid #ffb300; } /* Yellow/Orange */
+        .status-Accepted { border-left: 5px solid #9c27b0; } /* Primary Purple */
+        .status-Live { border-left: 5px solid #383855; } /* Border color */
+        
+        /* Tags */
+        .reward-tag {
+            background-color: #383855;
+            color: var(--color-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            margin-right: 10px;
+            display: inline-block;
+        }
+        .difficulty-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .difficulty-Easy { background-color: #004d40; color: var(--color-accent-green); } 
+        .difficulty-Medium { background-color: #5d4037; color: #ff9800; } 
+        .difficulty-Hard { background-color: #b71c1c; color: #ffcdd2; } 
+
+        /* Action Buttons */
+        .action-btn {
+            display: inline-block;
+            padding: 10px 14px;
+            color: var(--color-text-light) !important;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .btn-logout { background-color: #7b1fa2; }
+        .btn-ask { background-color: #9c27b0; }
+        .btn-accept { background-color: var(--color-accent-green); color: var(--color-bg-dark) !important; font-weight: 900; }
+        .btn-confirm { background-color: #ffb300; color: var(--color-bg-dark) !important; }
+        .btn-approve { background-color: #43a047; }
+        .btn-chat { background-color: #3f51b5; } /* Blue for Chat */
+        
+        .message-box {
+            background-color: #2b2b41; 
+            color: var(--color-accent-green); 
+            padding: 10px; 
+            border-radius: 5px; 
+            margin-bottom: 15px; 
+            font-weight: 600;
+            border: 1px solid var(--color-primary-purple);
+        }
+
+        /* Leaderboard Styles */
+        .leader-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--color-border);
+            font-size: 0.95em;
+        }
+        .leader-xp {
+            font-weight: 900;
+            color: var(--color-accent-green);
+        }
+
+        /* Mobile Adjustments (Basic Responsiveness) */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            .stats-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>KARMIC</h1>
+        <!-- LOGOUT BUTTON -->
+        <a href="{{ url_for('logout') }}" class="action-btn btn-logout">
+            Logout
+        </a>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div>User: <strong>{{ user.username }}</strong> (<span class="rank">{{ user_rank }}</span>)</div>
+        <div>💰 Coins: <strong>{{ user.coins }}</strong></div>
+        <div>⭐ XP: <strong>{{ user.experience_points }}</strong></div>
+    </div>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="message-box">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="main-content">
+        <!-- Left Panel: Requests -->
+        <div class="left-panel">
+            <div class="panel-heading">Live Requests (The Feed)</div>
+            <a href="{{ url_for('create_request') }}" class="action-btn btn-ask" style="margin-bottom: 20px;">
+                + Ask for Help
+            </a>
+            
+            <!-- Live Requests Feed -->
+            {% for req in requests %}
+                <div class="request-card status-Live">
+                    <h4>{{ req.title }}</h4>
+                    <span class="reward-tag">{{ req.reward_coins }} Coins</span> 
+                    <span class="reward-tag">{{ req.xp_value }} XP</span> 
+                    <span class="difficulty-tag difficulty-{{ req.difficulty }}">{{ req.difficulty }}</span>
+                    <p>Description: *{{ req.description }}*</p>
+                    <p>Posted by: <em>A Peer</em></p>
+
+                    <!-- Accept Task Link -->
+                    <a href="{{ url_for('accept_task', request_id=req.id) }}" class="action-btn btn-accept">
+                       Accept Task
+                    </a>
+                </div>
+            {% else %}
+                <p style="margin-left: 10px; color: #aaa;">No live requests right now. Post one or check back later!</p>
+            {% endfor %}
+
+            <div class="panel-heading" style="margin-top: 30px;">Your Active & Completed Tasks</div>
+            <!-- Tracking Requests -->
+            {% for req in my_requests %}
+                
+                <!-- Use dynamic class for status border -->
+                <div class="request-card status-{{ req.status }}">
+                    <h4 style="display: inline-block; margin-right: 10px;">{{ req.title }}</h4>
+                    <span class="reward-tag">Status: {{ req.status }}</span>
+                    
+                    <p>Reward: {{ req.reward_coins }} Coins, {{ req.xp_value }} XP</p>
+                    
+                    <!-- CHAT AND CONFIRMATION LOGIC -->
+                    
+                    <!-- CHAT LINK -->
+                    {% if req.status != 'Live' and req.status != 'Completed' %}
+                        <a href="{{ url_for('chat_view', request_id=req.id) }}" class="action-btn btn-chat" style="margin-right: 10px;">
+                            Go to Chat
+                        </a>
+                    {% endif %}
+                    
+                    <!-- 1. Helper confirms completion -->
+                    {% if req.status == 'Accepted' and req.helper_id == user.id %}
+                        <p style="margin-top: 5px;">
+                            <a href="{{ url_for('helper_confirm', request_id=req.id) }}" class="action-btn btn-confirm">
+                                I Have Completed the Task
+                            </a>
+                        </p>
+                    <!-- 2. Requester sees task confirmation -->
+                    {% elif req.status == 'Confirmed_By_Helper' and req.requester_id == user.id %}
+                        <p style="margin-top: 5px;">
+                            <span style="color: #ffb300; font-weight: bold; margin-right: 10px;">Helper Awaiting Approval:</span>
+                            <a href="{{ url_for('requester_approve', request_id=req.id) }}" class="action-btn btn-approve">
+                                Approve & Release Coins
+                            </a>
+                        </p>
+                    <!-- 3. Helper sees Awaiting Requester's approval -->
+                    {% elif req.status == 'Confirmed_By_Helper' and req.helper_id == user.id %}
+                        <p style="color: #ffb300; font-weight: bold;">Awaiting Requester's Approval...</p>
+                    
+                    {% elif req.status == 'Completed' %}
+                        <p style="color: var(--color-accent-green); font-weight: bold;">Task Successfully Completed!</p>
+                    
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Panel: Leaderboard -->
+        <div class="right-panel">
+            <div class="panel-heading">Karmic Leaderboard (Top 10)</div>
+            {% for leader in leaderboard %}
+                <div class="leader-item">
+                    <span class="leader-name">#{{ loop.index }}. {{ leader.username }}</span>
+                    <span class="leader-xp">{{ leader.experience_points }} XP</span>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
