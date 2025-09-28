@@ -1,4 +1,4 @@
-KARMIC: Pro-Person, Pro-Planet Wellness App
+KARMIC: KARMIC: Where Your Karma is Your Currency, Invest It Wisely
 (Please Note that this is MVP-Minimum Viable Prototype and we may bring updates to this gradually)
 
 Project Overview: KARMIC is a gamified peer-to-peer assistance platform designed to combat the "kindness deficit" and loneliness in campus environments. Students can post requests (e.g., "Need help with a code bug" or "Need someone to talk to") and offer a reward in Coins. Helpers gain Coins and Experience Points (XP) based on the task's difficulty, increasing their Karmic Rank and visibility on the Leaderboard.This application is built as a Flask (Python) mobile-first web app using SQLAlchemy for data persistence.
